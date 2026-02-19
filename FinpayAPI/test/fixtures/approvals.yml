@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  expense: one
+  approver_id: 
+  status: MyString
+
+two:
+  expense: two
+  approver_id: 
+  status: MyString
