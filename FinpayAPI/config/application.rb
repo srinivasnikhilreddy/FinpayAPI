@@ -1,6 +1,7 @@
 require_relative "boot"
 
 require "rails/all"
+require_relative "../app/middleware/tenant_switcher"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -11,6 +12,11 @@ module FinpayAPI
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.0
 
+
+    # Middleware to switch tenants based on the request header
+    config.middleware.use TenantSwitcher
+
+  
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files
