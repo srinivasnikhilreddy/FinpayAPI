@@ -1,29 +1,50 @@
 module Api
   module V1
     class CompaniesController < ApplicationController
+      before_action :set_company, only: [:show, :destroy]
+
+      # GET /api/v1/companies
       def index
         render json: Company.all
       end
 
-      # params means the request body, which is expected to be in JSON format.
-      # http://localhost:3000/api/v1/companies/1
-      # params[:id] will be 1 in this case, which is used to find the company with id 1 and return it as JSON.
+      # GET /api/v1/companies/:id
       def show
-        company = Company.find(params[:id])
-        render json: company
+        render json: @company
       end
 
+      # POST /api/v1/companies
       def create
         company = Company.new(company_params)
 
-        if company.save
+        begin
+          # if companyprovisioning fails, we want to rollback the company creation as well, so we wrap both operations in a transaction
+          Company.transaction do
+            company.save! # raises ActiveRecord::RecordInvalid if validation fails
+            CompanyProvisioningService.call(company)
+          end
+
           render json: company, status: :created
-        else
-          render json: { errors: company.errors.full_messages }, status: :unprocessable_entity
+
+        rescue ActiveRecord::RecordInvalid => e
+          render json: { errors: e.record.errors.full_messages }, status: :unprocessable_entity
+
+        rescue StandardError => e
+          render json: { error: e.message }, status: :internal_server_error
         end
       end
 
+      # DELETE /api/v1/companies/:id
+      def destroy
+        @company.destroy
+        render json: { message: "Company deleted successfully" }, status: :ok
+      end
+
       private
+
+      def set_company
+        @company = Company.find(params[:id])
+      end
 
       def company_params
         params.require(:company).permit(:name, :subdomain)
