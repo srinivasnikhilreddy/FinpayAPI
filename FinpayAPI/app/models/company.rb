@@ -1,4 +1,10 @@
 class Company < ApplicationRecord
+  validates :name, presence: true
+  validates :subdomain, presence: true, uniqueness: true
+end
+
+=begin
+class Company < ApplicationRecord
   # executes the provisioning service after a company record is created
   after_create :provision_schema
 
@@ -9,3 +15,4 @@ class Company < ApplicationRecord
     CompanyProvisioningService.call(self)
   end
 end
+=end
