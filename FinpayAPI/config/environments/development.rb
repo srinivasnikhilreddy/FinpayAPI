@@ -3,9 +3,10 @@ require "active_support/core_ext/integer/time"
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
-  
+  # Allow requests from lvh.me and its subdomains (e.g., lvh.me)
+  # config.hosts << "lvh.me"
   # Allow requests from lvh.me and its subdomains (e.g., tenant1.lvh.me, tenant2.lvh.me)
-  config.hosts << /.*\.lvh\.me/
+  # config.hosts << /.*\.lvh\.me/
 
 
   # In the development environment your application's code is reloaded any time
