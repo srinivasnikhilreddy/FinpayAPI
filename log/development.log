@@ -3528,3 +3528,350 @@ Processing by Api::V1::UsersController#index as */*
 Completed 200 OK in 2ms (Views: 1.2ms | ActiveRecord: 0.4ms | Allocations: 712)
 
 
+  [1m[35m (0.1ms)[0m  [1m[34mSELECT pg_try_advisory_lock(7684012389382155225)[0m
+  [1m[36mActiveRecord::SchemaMigration Pluck (1.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Migrating to AddDeviseToUsers (20260220214222)
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.7ms)[0m  [1m[35mALTER TABLE "users" ADD "email" character varying DEFAULT '' NOT NULL[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.1ms)[0m  [1m[34mSELECT pg_advisory_unlock(7684012389382155225)[0m
+  [1m[36mActiveRecord::SchemaMigration Pluck (1.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT pg_try_advisory_lock(7684012389382155225)[0m
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.3ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Migrating to CreateTransactions (20260219090403)
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (3.9ms)[0m  [1m[35mDROP TABLE "transactions"[0m
+  [1m[36mActiveRecord::SchemaMigration Delete All (6.0ms)[0m  [1m[31mDELETE FROM "schema_migrations" WHERE "schema_migrations"."version" = $1[0m  [["version", "20260219090403"]]
+  [1m[36mTRANSACTION (7.7ms)[0m  [1m[35mCOMMIT[0m
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT pg_advisory_unlock(7684012389382155225)[0m
+  [1m[36mActiveRecord::SchemaMigration Pluck (1.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT pg_try_advisory_lock(7684012389382155225)[0m
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.9ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Migrating to CreateTransactions (20260219090403)
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (10.5ms)[0m  [1m[35mCREATE TABLE "transactions" ("id" bigserial primary key, "amount" decimal, "transaction_type" character varying, "account_id" bigint NOT NULL, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, CONSTRAINT "fk_rails_01f020e267"
+FOREIGN KEY ("account_id")
+  REFERENCES "accounts" ("id")
+)[0m
+  [1m[35m (0.5ms)[0m  [1m[35mCREATE INDEX "index_transactions_on_account_id" ON "transactions" ("account_id")[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.2ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ($1) RETURNING "version"[0m  [["version", "20260219090403"]]
+  [1m[36mTRANSACTION (0.5ms)[0m  [1m[35mCOMMIT[0m
+Migrating to AddDeviseToUsers (20260220214915)
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.5ms)[0m  [1m[35mALTER TABLE "users" ADD "email" character varying DEFAULT '' NOT NULL[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.1ms)[0m  [1m[34mSELECT pg_advisory_unlock(7684012389382155225)[0m
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT pg_try_advisory_lock(7684012389382155225)[0m
+  [1m[36mActiveRecord::SchemaMigration Pluck (1.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Migrating to AddDeviseFieldsToUsers (20260220215059)
+  [1m[36mTRANSACTION (0.8ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (2.4ms)[0m  [1m[35mALTER TABLE "users" ADD "encrypted_password" character varying DEFAULT '' NOT NULL[0m
+  [1m[35m (0.2ms)[0m  [1m[35mALTER TABLE "users" ADD "reset_password_token" character varying[0m
+  [1m[35m (0.2ms)[0m  [1m[35mALTER TABLE "users" ADD "reset_password_sent_at" timestamp(6)[0m
+  [1m[35m (0.2ms)[0m  [1m[35mALTER TABLE "users" ADD "remember_created_at" timestamp(6)[0m
+  [1m[35m (0.7ms)[0m  [1m[35mALTER TABLE "users" ADD "jti" character varying NOT NULL[0m
+  [1m[35m (2.1ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_users_on_reset_password_token" ON "users" ("reset_password_token")[0m
+  [1m[35m (1.6ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_users_on_jti" ON "users" ("jti")[0m
+  [1m[36mActiveRecord::SchemaMigration Create (1.3ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ($1) RETURNING "version"[0m  [["version", "20260220215059"]]
+  [1m[36mTRANSACTION (2.0ms)[0m  [1m[35mCOMMIT[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.9ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT pg_advisory_unlock(7684012389382155225)[0m
+  [1m[36mActiveRecord::SchemaMigration Pluck (1.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Started POST "/api/v1/register" for ::1 at 2026-02-21 03:42:49 +0530
+  [1m[36mActiveRecord::SchemaMigration Pluck (1.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Header received: 
+Current path: /api/v1/register
+  
+ActionController::RoutingError (No route matches [POST] "/api/v1/register"):
+  
+Started POST "/api/v1/register" for ::1 at 2026-02-21 03:45:51 +0530
+  [1m[36mActiveRecord::SchemaMigration Pluck (3.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Header received: 
+Current path: /api/v1/register
+Processing by Api::V1::RegistrationsController#create as */*
+  Parameters: {"user"=>{"email"=>"srinivas@gmail.com", "password"=>"[FILTERED]", "password_confirmation"=>"[FILTERED]", "role"=>"admin"}, "registration"=>{"user"=>{"email"=>"srinivas@gmail.com", "password"=>"[FILTERED]", "password_confirmation"=>"[FILTERED]", "role"=>"admin"}}}
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+  [1m[36mUser Exists? (1.9ms)[0m  [1m[34mSELECT 1 AS one FROM "users" WHERE "users"."email" IS NULL LIMIT $1[0m  [["LIMIT", 1]]
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+  [1m[36mTRANSACTION (0.7ms)[0m  [1m[31mROLLBACK[0m
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+Completed 422 Unprocessable Entity in 32ms (Views: 0.1ms | ActiveRecord: 12.5ms | Allocations: 14666)
+
+
+Started POST "/api/v1/register" for ::1 at 2026-02-21 03:47:39 +0530
+  [1m[36mActiveRecord::SchemaMigration Pluck (1.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Header received: 
+Current path: /api/v1/register
+Processing by Api::V1::RegistrationsController#create as */*
+  Parameters: {"user"=>{"email"=>"srinivas@gmail.com", "password"=>"[FILTERED]", "password_confirmation"=>"[FILTERED]", "role"=>"admin"}, "registration"=>{"user"=>{"email"=>"srinivas@gmail.com", "password"=>"[FILTERED]", "password_confirmation"=>"[FILTERED]", "role"=>"admin"}}}
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+  [1m[36mUser Exists? (1.3ms)[0m  [1m[34mSELECT 1 AS one FROM "users" WHERE "users"."email" IS NULL LIMIT $1[0m  [["LIMIT", 1]]
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[31mROLLBACK[0m
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+Completed 422 Unprocessable Entity in 24ms (Views: 0.1ms | ActiveRecord: 8.6ms | Allocations: 14370)
+
+
+Started POST "/api/v1/register" for ::1 at 2026-02-21 03:48:20 +0530
+Header received: 
+Current path: /api/v1/register
+Processing by Api::V1::RegistrationsController#create as */*
+  Parameters: {"user"=>{"email"=>"nick@gmail.com", "password"=>"[FILTERED]", "password_confirmation"=>"[FILTERED]", "role"=>"admin"}, "registration"=>{"user"=>{"email"=>"nick@gmail.com", "password"=>"[FILTERED]", "password_confirmation"=>"[FILTERED]", "role"=>"admin"}}}
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN[0m
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+  [1m[36mUser Exists? (0.4ms)[0m  [1m[34mSELECT 1 AS one FROM "users" WHERE "users"."email" IS NULL LIMIT $1[0m  [["LIMIT", 1]]
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[31mROLLBACK[0m
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+Completed 422 Unprocessable Entity in 9ms (Views: 0.0ms | ActiveRecord: 0.6ms | Allocations: 2932)
+
+
+Started POST "/api/v1/register" for ::1 at 2026-02-21 03:48:31 +0530
+Header received: 
+Current path: /api/v1/register
+Processing by Api::V1::RegistrationsController#create as */*
+  Parameters: {"user"=>{"email"=>"rock@gmail.com", "password"=>"[FILTERED]", "password_confirmation"=>"[FILTERED]", "role"=>"admin"}, "registration"=>{"user"=>{"email"=>"rock@gmail.com", "password"=>"[FILTERED]", "password_confirmation"=>"[FILTERED]", "role"=>"admin"}}}
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mBEGIN[0m
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+  [1m[36mUser Exists? (0.4ms)[0m  [1m[34mSELECT 1 AS one FROM "users" WHERE "users"."email" IS NULL LIMIT $1[0m  [["LIMIT", 1]]
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[31mROLLBACK[0m
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+Completed 422 Unprocessable Entity in 3ms (Views: 0.0ms | ActiveRecord: 0.8ms | Allocations: 2925)
+
+
+Started POST "/api/v1/register" for ::1 at 2026-02-21 03:48:51 +0530
+Header received: 
+Current path: /api/v1/register
+Processing by Api::V1::RegistrationsController#create as */*
+  Parameters: {"user"=>{"email"=>"rock@gmail.com", "password"=>"[FILTERED]", "password_confirmation"=>"[FILTERED]", "role"=>"admin"}, "registration"=>{"user"=>{"email"=>"rock@gmail.com", "password"=>"[FILTERED]", "password_confirmation"=>"[FILTERED]", "role"=>"admin"}}}
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN[0m
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+  [1m[36mUser Exists? (0.4ms)[0m  [1m[34mSELECT 1 AS one FROM "users" WHERE "users"."email" IS NULL LIMIT $1[0m  [["LIMIT", 1]]
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[31mROLLBACK[0m
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+Completed 422 Unprocessable Entity in 4ms (Views: 0.1ms | ActiveRecord: 0.7ms | Allocations: 2925)
+
+
+Started POST "/api/v1/register" for ::1 at 2026-02-21 03:49:20 +0530
+Header received: company1
+Current path: /api/v1/register
+  [1m[36mCompany Load (0.8ms)[0m  [1m[34mSELECT "companies".* FROM "companies" WHERE "companies"."subdomain" = $1 LIMIT $2[0m  [["subdomain", "company1"], ["LIMIT", 1]]
+  ↳ app/middleware/tenant_switcher.rb:29:in `switch_schema'
+Switched to schema: company1
+Processing by Api::V1::RegistrationsController#create as */*
+  Parameters: {"user"=>{"email"=>"rock@gmail.com", "password"=>"[FILTERED]", "password_confirmation"=>"[FILTERED]", "role"=>"admin"}, "registration"=>{"user"=>{"email"=>"rock@gmail.com", "password"=>"[FILTERED]", "password_confirmation"=>"[FILTERED]", "role"=>"admin"}}}
+  [1m[36mTRANSACTION (0.7ms)[0m  [1m[35mBEGIN[0m
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+  [1m[36mUser Exists? (1.2ms)[0m  [1m[34mSELECT 1 AS one FROM "users" WHERE "users"."email" IS NULL LIMIT $1[0m  [["LIMIT", 1]]
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+  [1m[36mTRANSACTION (3.4ms)[0m  [1m[31mROLLBACK[0m
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+Completed 422 Unprocessable Entity in 8ms (Views: 0.1ms | ActiveRecord: 5.3ms | Allocations: 2921)
+
+
+Started POST "/api/v1/register" for ::1 at 2026-02-21 03:49:25 +0530
+Header received: company1
+Current path: /api/v1/register
+  [1m[36mCompany Load (0.3ms)[0m  [1m[34mSELECT "companies".* FROM "companies" WHERE "companies"."subdomain" = $1 LIMIT $2[0m  [["subdomain", "company1"], ["LIMIT", 1]]
+  ↳ app/middleware/tenant_switcher.rb:29:in `switch_schema'
+Switched to schema: company1
+Processing by Api::V1::RegistrationsController#create as */*
+  Parameters: {"user"=>{"email"=>"srinivas@gmail.com", "password"=>"[FILTERED]", "password_confirmation"=>"[FILTERED]", "role"=>"admin"}, "registration"=>{"user"=>{"email"=>"srinivas@gmail.com", "password"=>"[FILTERED]", "password_confirmation"=>"[FILTERED]", "role"=>"admin"}}}
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+  [1m[36mUser Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "users" WHERE "users"."email" IS NULL LIMIT $1[0m  [["LIMIT", 1]]
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[31mROLLBACK[0m
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+Completed 422 Unprocessable Entity in 5ms (Views: 0.1ms | ActiveRecord: 0.7ms | Allocations: 2915)
+
+
+Started POST "/api/v1/register" for ::1 at 2026-02-21 03:49:52 +0530
+Header received: company1
+Current path: /api/v1/register
+  [1m[36mCompany Load (0.3ms)[0m  [1m[34mSELECT "companies".* FROM "companies" WHERE "companies"."subdomain" = $1 LIMIT $2[0m  [["subdomain", "company1"], ["LIMIT", 1]]
+  ↳ app/middleware/tenant_switcher.rb:29:in `switch_schema'
+Switched to schema: company1
+Processing by Api::V1::RegistrationsController#create as */*
+  Parameters: {"user"=>{"email"=>"srinivas@gmail.com", "password"=>"[FILTERED]", "password_confirmation"=>"[FILTERED]"}, "registration"=>{"user"=>{"email"=>"srinivas@gmail.com", "password"=>"[FILTERED]", "password_confirmation"=>"[FILTERED]"}}}
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN[0m
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+  [1m[36mUser Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "users" WHERE "users"."email" IS NULL LIMIT $1[0m  [["LIMIT", 1]]
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[31mROLLBACK[0m
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+Completed 422 Unprocessable Entity in 3ms (Views: 0.1ms | ActiveRecord: 0.6ms | Allocations: 2915)
+
+
+  [1m[36mCompany Pluck (1.7ms)[0m  [1m[34mSELECT "companies"."subdomain" FROM "companies"[0m
+Started POST "/api/v1/register" for ::1 at 2026-02-21 03:53:49 +0530
+  [1m[36mActiveRecord::SchemaMigration Pluck (1.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Header received: company1
+Current path: /api/v1/register
+  [1m[36mCompany Load (1.0ms)[0m  [1m[34mSELECT "companies".* FROM "companies" WHERE "companies"."subdomain" = $1 LIMIT $2[0m  [["subdomain", "company1"], ["LIMIT", 1]]
+  ↳ app/middleware/tenant_switcher.rb:29:in `switch_schema'
+Switched to schema: company1
+Processing by Api::V1::RegistrationsController#create as */*
+  Parameters: {"user"=>{"email"=>"srinivas@gmail.com", "password"=>"[FILTERED]", "password_confirmation"=>"[FILTERED]", "role"=>"admin"}, "registration"=>{"user"=>{"email"=>"srinivas@gmail.com", "password"=>"[FILTERED]", "password_confirmation"=>"[FILTERED]", "role"=>"admin"}}}
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+  [1m[36mUser Exists? (1.0ms)[0m  [1m[34mSELECT 1 AS one FROM "users" WHERE "users"."email" IS NULL LIMIT $1[0m  [["LIMIT", 1]]
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[31mROLLBACK[0m
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+Completed 422 Unprocessable Entity in 19ms (Views: 0.1ms | ActiveRecord: 5.8ms | Allocations: 10002)
+
+
+Started POST "/api/v1/register" for ::1 at 2026-02-21 03:53:55 +0530
+Header received: 
+Current path: /api/v1/register
+Processing by Api::V1::RegistrationsController#create as */*
+  Parameters: {"user"=>{"email"=>"srinivas@gmail.com", "password"=>"[FILTERED]", "password_confirmation"=>"[FILTERED]", "role"=>"admin"}, "registration"=>{"user"=>{"email"=>"srinivas@gmail.com", "password"=>"[FILTERED]", "password_confirmation"=>"[FILTERED]", "role"=>"admin"}}}
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN[0m
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+  [1m[36mUser Exists? (1.4ms)[0m  [1m[34mSELECT 1 AS one FROM "users" WHERE "users"."email" IS NULL LIMIT $1[0m  [["LIMIT", 1]]
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[31mROLLBACK[0m
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+Completed 422 Unprocessable Entity in 8ms (Views: 0.0ms | ActiveRecord: 1.7ms | Allocations: 2922)
+
+
+Started POST "/api/v1/register" for ::1 at 2026-02-21 03:53:57 +0530
+Header received: 
+Current path: /api/v1/register
+Processing by Api::V1::RegistrationsController#create as */*
+  Parameters: {"user"=>{"email"=>"srinivas@gmail.com", "password"=>"[FILTERED]", "password_confirmation"=>"[FILTERED]", "role"=>"admin"}, "registration"=>{"user"=>{"email"=>"srinivas@gmail.com", "password"=>"[FILTERED]", "password_confirmation"=>"[FILTERED]", "role"=>"admin"}}}
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+  [1m[36mUser Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "users" WHERE "users"."email" IS NULL LIMIT $1[0m  [["LIMIT", 1]]
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[31mROLLBACK[0m
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+Completed 422 Unprocessable Entity in 2ms (Views: 0.0ms | ActiveRecord: 0.6ms | Allocations: 2915)
+
+
+  [1m[35m (47.7ms)[0m  [1m[35mDROP SCHEMA company1 CASCADE[0m
+  [1m[35m (57.4ms)[0m  [1m[35mDROP SCHEMA company2 CASCADE[0m
+  [1m[36mTRANSACTION (0.4ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mCompany Exists? (2.2ms)[0m  [1m[34mSELECT 1 AS one FROM "companies" WHERE "companies"."subdomain" = $1 LIMIT $2[0m  [["subdomain", "company1"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (8.0ms)[0m  [1m[31mROLLBACK[0m
+  [1m[36mCompany Load (1.3ms)[0m  [1m[34mSELECT "companies".* FROM "companies"[0m
+  [1m[36mCompany Load (0.5ms)[0m  [1m[34mSELECT "companies".* FROM "companies" WHERE "companies"."id" = $1 LIMIT $2[0m  [["id", 7], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mCompany Destroy (0.4ms)[0m  [1m[31mDELETE FROM "companies" WHERE "companies"."id" = $1[0m  [["id", 7]]
+  [1m[36mTRANSACTION (1.8ms)[0m  [1m[35mCOMMIT[0m
+  [1m[36mCompany Load (1.2ms)[0m  [1m[34mSELECT "companies".* FROM "companies"[0m
+  [1m[36mCompany Load (1.2ms)[0m  [1m[34mSELECT "companies".* FROM "companies" WHERE "companies"."id" = $1 LIMIT $2[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mCompany Destroy (0.8ms)[0m  [1m[31mDELETE FROM "companies" WHERE "companies"."id" = $1[0m  [["id", 8]]
+  [1m[36mTRANSACTION (1.1ms)[0m  [1m[35mCOMMIT[0m
+  [1m[36mTRANSACTION (0.7ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mCompany Exists? (0.8ms)[0m  [1m[34mSELECT 1 AS one FROM "companies" WHERE "companies"."subdomain" = $1 LIMIT $2[0m  [["subdomain", "company1"], ["LIMIT", 1]]
+  [1m[36mCompany Create (0.9ms)[0m  [1m[32mINSERT INTO "companies" ("name", "subdomain", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["name", "Company 1"], ["subdomain", "company1"], ["created_at", "2026-02-20 22:29:13.203502"], ["updated_at", "2026-02-20 22:29:13.203502"]]
+  [1m[36mTRANSACTION (1.4ms)[0m  [1m[35mCOMMIT[0m
+  [1m[36mTRANSACTION (0.6ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mCompany Exists? (0.7ms)[0m  [1m[34mSELECT 1 AS one FROM "companies" WHERE "companies"."subdomain" = $1 LIMIT $2[0m  [["subdomain", "company2"], ["LIMIT", 1]]
+  [1m[36mCompany Create (0.4ms)[0m  [1m[32mINSERT INTO "companies" ("name", "subdomain", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["name", "Company 2"], ["subdomain", "company2"], ["created_at", "2026-02-20 22:29:28.890111"], ["updated_at", "2026-02-20 22:29:28.890111"]]
+  [1m[36mTRANSACTION (1.3ms)[0m  [1m[35mCOMMIT[0m
+  [1m[36mCompany Load (1.3ms)[0m  [1m[34mSELECT "companies".* FROM "companies"[0m
+Started POST "/api/v1/register" for ::1 at 2026-02-21 03:59:56 +0530
+  [1m[36mActiveRecord::SchemaMigration Pluck (1.3ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Header received: 
+Current path: /api/v1/register
+Processing by Api::V1::RegistrationsController#create as */*
+  Parameters: {"user"=>{"email"=>"srinivas@gmail.com", "password"=>"[FILTERED]", "password_confirmation"=>"[FILTERED]", "role"=>"admin"}, "registration"=>{"user"=>{"email"=>"srinivas@gmail.com", "password"=>"[FILTERED]", "password_confirmation"=>"[FILTERED]", "role"=>"admin"}}}
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mBEGIN[0m
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+  [1m[36mUser Exists? (1.1ms)[0m  [1m[34mSELECT 1 AS one FROM "users" WHERE "users"."email" IS NULL LIMIT $1[0m  [["LIMIT", 1]]
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[31mROLLBACK[0m
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+Completed 422 Unprocessable Entity in 26ms (Views: 0.1ms | ActiveRecord: 10.7ms | Allocations: 14376)
+
+
+Started POST "/api/v1/register" for ::1 at 2026-02-21 04:00:01 +0530
+Header received: company1
+Current path: /api/v1/register
+  [1m[36mCompany Load (1.1ms)[0m  [1m[34mSELECT "companies".* FROM "companies" WHERE "companies"."subdomain" = $1 LIMIT $2[0m  [["subdomain", "company1"], ["LIMIT", 1]]
+  ↳ app/middleware/tenant_switcher.rb:29:in `switch_schema'
+Switched to schema: company1
+Processing by Api::V1::RegistrationsController#create as */*
+  Parameters: {"user"=>{"email"=>"srinivas@gmail.com", "password"=>"[FILTERED]", "password_confirmation"=>"[FILTERED]", "role"=>"admin"}, "registration"=>{"user"=>{"email"=>"srinivas@gmail.com", "password"=>"[FILTERED]", "password_confirmation"=>"[FILTERED]", "role"=>"admin"}}}
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+  [1m[36mUser Exists? (1.6ms)[0m  [1m[34mSELECT 1 AS one FROM "users" WHERE "users"."email" IS NULL LIMIT $1[0m  [["LIMIT", 1]]
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[31mROLLBACK[0m
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+Completed 422 Unprocessable Entity in 4ms (Views: 0.0ms | ActiveRecord: 1.9ms | Allocations: 2926)
+
+
+Started POST "/api/v1/register" for ::1 at 2026-02-21 04:00:04 +0530
+Header received: company1
+Current path: /api/v1/register
+  [1m[36mCompany Load (0.3ms)[0m  [1m[34mSELECT "companies".* FROM "companies" WHERE "companies"."subdomain" = $1 LIMIT $2[0m  [["subdomain", "company1"], ["LIMIT", 1]]
+  ↳ app/middleware/tenant_switcher.rb:29:in `switch_schema'
+Switched to schema: company1
+Processing by Api::V1::RegistrationsController#create as */*
+  Parameters: {"user"=>{"email"=>"srinivas@gmail.com", "password"=>"[FILTERED]", "password_confirmation"=>"[FILTERED]", "role"=>"admin"}, "registration"=>{"user"=>{"email"=>"srinivas@gmail.com", "password"=>"[FILTERED]", "password_confirmation"=>"[FILTERED]", "role"=>"admin"}}}
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN[0m
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+  [1m[36mUser Exists? (0.2ms)[0m  [1m[34mSELECT 1 AS one FROM "users" WHERE "users"."email" IS NULL LIMIT $1[0m  [["LIMIT", 1]]
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[31mROLLBACK[0m
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+Completed 422 Unprocessable Entity in 3ms (Views: 0.1ms | ActiveRecord: 0.4ms | Allocations: 2918)
+
+
+Started POST "/api/v1/register" for ::1 at 2026-02-21 04:01:41 +0530
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.9ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Header received: 
+Current path: /api/v1/register
+Processing by Api::V1::RegistrationsController#create as */*
+  Parameters: {"user"=>{"email"=>"srinivas@gmail.com", "password"=>"[FILTERED]", "password_confirmation"=>"[FILTERED]", "role"=>"admin"}, "registration"=>{"user"=>{"email"=>"srinivas@gmail.com", "password"=>"[FILTERED]", "password_confirmation"=>"[FILTERED]", "role"=>"admin"}}}
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mBEGIN[0m
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+  [1m[36mUser Exists? (2.5ms)[0m  [1m[34mSELECT 1 AS one FROM "users" WHERE "users"."email" IS NULL LIMIT $1[0m  [["LIMIT", 1]]
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[31mROLLBACK[0m
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+Completed 422 Unprocessable Entity in 32ms (Views: 0.1ms | ActiveRecord: 16.1ms | Allocations: 14376)
+
+
+Started POST "/api/v1/register" for ::1 at 2026-02-21 04:05:46 +0530
+Header received: company1
+Current path: /api/v1/register
+  [1m[36mCompany Load (1.3ms)[0m  [1m[34mSELECT "companies".* FROM "companies" WHERE "companies"."subdomain" = $1 LIMIT $2[0m  [["subdomain", "company1"], ["LIMIT", 1]]
+  ↳ app/middleware/tenant_switcher.rb:29:in `switch_schema'
+Switched to schema: company1
+Processing by Api::V1::RegistrationsController#create as */*
+  Parameters: {"user"=>{"email"=>"srinivas@gmail.com", "password"=>"[FILTERED]", "password_confirmation"=>"[FILTERED]", "role"=>"admin"}, "registration"=>{"user"=>{"email"=>"srinivas@gmail.com", "password"=>"[FILTERED]", "password_confirmation"=>"[FILTERED]", "role"=>"admin"}}}
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+  [1m[36mUser Exists? (0.4ms)[0m  [1m[34mSELECT 1 AS one FROM "users" WHERE "users"."email" IS NULL LIMIT $1[0m  [["LIMIT", 1]]
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[31mROLLBACK[0m
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+Completed 422 Unprocessable Entity in 2ms (Views: 0.0ms | ActiveRecord: 0.8ms | Allocations: 2926)
+
+
+Started POST "/api/v1/register" for ::1 at 2026-02-21 04:06:17 +0530
+Header received: 
+Current path: /api/v1/register
+Processing by Api::V1::RegistrationsController#create as */*
+  Parameters: {"user"=>{"email"=>"srinivas@gmail.com", "password"=>"[FILTERED]", "password_confirmation"=>"[FILTERED]", "role"=>"admin"}, "registration"=>{"user"=>{"email"=>"srinivas@gmail.com", "password"=>"[FILTERED]", "password_confirmation"=>"[FILTERED]", "role"=>"admin"}}}
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+  [1m[36mUser Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "users" WHERE "users"."email" IS NULL LIMIT $1[0m  [["LIMIT", 1]]
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[31mROLLBACK[0m
+  ↳ app/middleware/tenant_switcher.rb:19:in `call'
+Completed 422 Unprocessable Entity in 3ms (Views: 0.0ms | ActiveRecord: 0.7ms | Allocations: 2925)
+
+
