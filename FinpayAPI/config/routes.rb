@@ -7,6 +7,7 @@ Rails.application.routes.draw do
       resources :accounts
       resources :approvals
       resources :transactions
+      resources :companies
     end
   end
 end
