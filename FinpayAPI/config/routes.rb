@@ -1,12 +1,52 @@
 Rails.application.routes.draw do
+  # PLATFORM AUTH
+  devise_for :platform_users,
+    path: 'platform',
+    #skip: [:registrations],
+    path_names: {
+      sign_in: 'login',
+      sign_out: 'logout',
+      registration: 'register'
+    },
+    controllers: {
+      registrations: 'platform/registrations',
+      sessions: 'platform/sessions'
+    }
+
+  namespace :platform do
+    resources :companies, only: [:index, :show, :create, :destroy]
+  end
+
+  # TENANT AUTH
+  devise_for :users,
+    path: '',
+    #skip: [:registrations],
+    path_names: {
+      sign_in: 'login',
+      sign_out: 'logout',
+      registration: 'register'
+    },
+    controllers: {
+      registrations: 'api/v1/users/registrations',
+      sessions: 'api/v1/users/sessions'
+    }
+
   namespace :api do
     namespace :v1 do
-      resources :users
-      resources :categories
-      resources :expenses
-      resources :accounts
+      resources :categories, only: [:index, :show, :create, :update, :destroy]
       resources :approvals
-      resources :transactions
+      resources :accounts, only: [:index, :show, :create, :update, :destroy]
+      resources :transactions, only: [:index, :show, :create, :destroy]
+      resources :users, only: [:index, :show, :create, :update, :destroy]
+      resources :audit_logs, only: [:index, :show]
+      resources :expenses do
+        resources :receipts, only: [:index, :create]
+      end
+
+      resources :receipts, only: [:show, :update, :destroy]
     end
   end
+
+  # Health check
+  get '/health', to: 'health#check'
 end

@@ -1,36 +1,51 @@
 module Api
   module V1
     class ApprovalsController < ApplicationController
+      before_action :require_manager_or_admin!
       before_action :set_approval, only: [:show, :update, :destroy]
 
       def index
-        render json: Approval.all
+        approvals = paginate(Approval.includes(:expense, :approver).order(created_at: :desc))
+        
+        render json: {
+          data: ApprovalSerializer.new(approvals),
+          meta: pagination_meta(approvals)
+        }
       end
 
       def show
-        render json: @approval
+        render json: ApprovalSerializer.new(@approval)
       end
 
       def create
-        approval = Approval.new(approval_params)
-        if approval.save
-          render json: approval, status: :created
+        @approval = Approval.new(approval_params)
+
+        if @approval.save
+          render json: ApprovalSerializer.new(@approval), status: :created
         else
-          render json: { errors: approval.errors.full_messages }, status: :unprocessable_entity
+          render json: { error: "Approval couldn't be created", details: @approval.errors.messages }, status: :unprocessable_entity
         end
       end
 
       def update
         if @approval.update(approval_params)
-          render json: @approval
+          AuditLogger.log!(
+            user: current_user,
+            action: "approval_updated",
+            resource: @approval,
+            request: request,
+            metadata: { new_status: @approval.status }
+          )
+          render json: ApprovalSerializer.new(@approval)
         else
-          render json: { errors: @approval.errors.full_messages }, status: :unprocessable_entity
+          render json: {
+            error: "Approval couldn't be updated", details: @approval.errors.messages }, status: :unprocessable_entity
         end
       end
 
       def destroy
-        @approval.destroy
-        render json: { message: "Approval deleted successfully" }
+        @approval.destroy!
+        render json: { message: "Approval deleted successfully" }, status: :ok
       end
 
       private

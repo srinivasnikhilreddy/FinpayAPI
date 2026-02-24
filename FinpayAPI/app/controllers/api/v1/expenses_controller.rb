@@ -1,35 +1,66 @@
 module Api
   module V1
+    # Employee -> Create Expense -> Manager/Admin Review -> Approve/Reject -> Finance processes payment
     class ExpensesController < ApplicationController
       before_action :set_expense, only: [:show, :update, :destroy]
+      before_action :authorize_expense!, only: [:show, :update, :destroy]
 
       def index
-        render json: Expense.all
+        # The N+1 problem happens when: You load 1 main query, Then Rails runs N additional queries (one per record), Instead of loading everything in just 1–2 optimized queries
+        # We can solve this by using includes method to load all the data at once and avoid N+1 problem
+        expenses = if current_user.admin? || current_user.manager?
+                    Expense.includes(:user, :category, approvals: :approver) # resolves N+1 problem
+                  else
+                    current_user.expenses.includes(:category, approvals: :approver) # resolves N+1 problem
+                  end
+        expenses = paginate(expenses.order(created_at: :desc))
+
+        render json: {
+          data: ExpenseSerializer.new(expenses),
+          meta: pagination_meta(expenses)
+        }
       end
 
       def show
-        render json: @expense
+        render json: ExpenseSerializer.new(@expense)
       end
 
       def create
-        expense = Expense.new(expense_params)
-        if expense.save
-          render json: expense, status: :created
+        @expense = current_user.expenses.build(expense_params)
+        if @expense.save
+          AuditLogger.log!(
+            user: current_user,
+            action: "expense_created",
+            resource: @expense,
+            request: request
+          )
+          render json: ExpenseSerializer.new(@expense), status: :created
         else
-          render json: { errors: expense.errors.full_messages }, status: :unprocessable_entity
+          render json: { error: "Expense couldn't be created", details: @expense.errors.messages }, status: :unprocessable_entity
         end
       end
 
       def update
         if @expense.update(expense_params)
-          render json: @expense
+          render json: ExpenseSerializer.new(@expense)
         else
-          render json: { errors: @expense.errors.full_messages }, status: :unprocessable_entity
+          render json: {
+            error: "Expense couldn't be updated",
+            details: @expense.errors.messages
+          }, status: :unprocessable_entity
         end
       end
 
       def destroy
-        @expense.destroy
+        @expense.soft_delete!
+
+        AuditLogger.log!(
+          user: current_user,
+          action: "expense_soft_deleted",
+          resource: @expense,
+          request: request
+        )
+
         render json: { message: "Expense deleted successfully" }
       end
 
@@ -40,7 +71,13 @@ module Api
       end
 
       def expense_params
-        params.require(:expense).permit(:amount, :description, :status, :user_id, :category_id)
+        params.require(:expense).permit(:amount, :description, :category_id)
+      end
+
+      def authorize_expense!
+        return if current_user.admin?
+        return if @expense.user_id == current_user.id && (current_user.employee? || current_user.manager?)
+        render_forbidden
       end
     end
   end
