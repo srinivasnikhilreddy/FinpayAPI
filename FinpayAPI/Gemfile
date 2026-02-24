@@ -3,6 +3,9 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby "3.2.2"
 
+# apartment is used for multi-tenancy in the application, allowing us to manage multiple tenants (clients) in a single application instance.
+gem 'ros-apartment', require: 'apartment'
+
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 7.0.10"
 
