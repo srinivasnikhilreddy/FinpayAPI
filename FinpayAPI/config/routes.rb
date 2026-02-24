@@ -1,12 +1,12 @@
 Rails.application.routes.draw do
   # PLATFORM AUTH
-  devise_for :platform_users,
+  devise_for :platform_users, # Devise sets internally: resource_class = PlatformUser
     path: 'platform',
-    #skip: [:registrations],
+    skip: [:registrations],
     path_names: {
       sign_in: 'login',
       sign_out: 'logout',
-      registration: 'register'
+      #registration: 'register'
     },
     controllers: {
       registrations: 'platform/registrations',
@@ -20,11 +20,11 @@ Rails.application.routes.draw do
   # TENANT AUTH
   devise_for :users,
     path: '',
-    #skip: [:registrations],
+    skip: [:registrations],
     path_names: {
       sign_in: 'login',
       sign_out: 'logout',
-      registration: 'register'
+      #registration: 'register'
     },
     controllers: {
       registrations: 'api/v1/users/registrations',
@@ -47,6 +47,8 @@ Rails.application.routes.draw do
     end
   end
 
-  # Health check
+  # Health check: usually load balancer will call /health
+  # /health: It is a lightweight endpoint used by infrastructure components like load balancers and orchestration systems to verify service liveness and readiness.
+  # In production, it can also validate database and cache connectivity.
   get '/health', to: 'health#check'
 end

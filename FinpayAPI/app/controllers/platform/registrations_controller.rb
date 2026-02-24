@@ -1,19 +1,20 @@
+# app/controllers/platform/registrations_controller.rb
+
 module Platform
   class RegistrationsController < Devise::RegistrationsController
-    # skip_before_action :authenticate_platform_user!, only: [:create]
-
+    skip_before_action :authenticate_platform_user!, only: [:create]
     respond_to :json
 
-    private
+    # POST /platform/register
+    def create
+      # in routes => devise_for :user => devise internally sets: resource_class = User
+      build_resource(sign_up_params) # => self.resource = PlatformUser.new(sign_up_params)
 
-    def sign_up_params
-      params.require(:platform_user).permit(:email, :password, :password_confirmation)
-    end
+      resource.role = "super_admin"
 
-    def respond_with(resource, _opts = {})
-      if resource.persisted?
+      if resource.save # self.resource = PlatformUser.create(sign_up_params)
         render json: {
-          status: { code: 200, message: 'Platform user registered successfully.' },
+          status: { code: 201, message: "Platform user registered." },
           data: {
             id: resource.id,
             email: resource.email,
@@ -22,10 +23,16 @@ module Platform
         }, status: :created
       else
         render json: {
-          status: { code: 422, message: "User couldn't be created successfully." },
-          errors: resource.errors.messages
+          errors: resource.errors.full_messages
         }, status: :unprocessable_entity
       end
+    end
+
+    private
+
+    def sign_up_params
+      params.require(:platform_user)
+            .permit(:email, :password, :password_confirmation)
     end
   end
 end

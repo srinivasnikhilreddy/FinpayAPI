@@ -336,13 +336,15 @@ Devise.setup do |config|
     jwt.secret = Rails.application.credentials.devise_jwt_secret_key! # ! is a bang method -> instead of returning nil, it will raise an error, which is useful for debugging and ensuring that the key is properly set.
     jwt.dispatch_requests = [
       ['POST', %r{^/platform/login$}],
-      ['POST', %r{^/login$}]
+      ['POST', %r{^/login$}] # Devise JWT module: Builds JWT payload. Signs it using your secret. Adds it to response header.
     ]
     jwt.revocation_requests = [
       ['DELETE', %r{^/platform/logout$}],
-      ['DELETE', %r{^/logout$}],
+      ['DELETE', %r{^/logout$}], # Each user has jti column. JWT contains that jti. If DB jti != token jti -> token invalid
       ['DELETE', %r{.*logout$}]
     ]
+    # don't include /register since registration DOES NOT issue JWT token
+    
     jwt.expiration_time = 1.day.to_i
   end
 

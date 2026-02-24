@@ -8,13 +8,14 @@ module Api
 
         respond_to :json
 
+        # POST /api/v1/users
         def create
-          build_resource(sign_up_params)
+          # in routes => devise_for :user => devise internally sets: resource_class = User
+          build_resource(sign_up_params) # => self.resource = User.new(sign_up_params)
 
-          # Force role to employee (no self-promotion possible)
           resource.role = "employee"
 
-          if resource.save
+          if resource.save # => self.resource = User.create(sign_up_params)
             render json: {
               status: { code: 200, message: 'Signed up successfully.' },
               data: UserSerializer.new(resource)

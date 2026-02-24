@@ -5,10 +5,12 @@ module Platform
     respond_to :json
     # before_action :ensure_rack_session
 
+    # POST /login
     def create
+      # Devise uses Warden, Warden runs database_authenticatable. It checks: email, encrypted_password (bcrypt compare), If valid -> authentication success
       self.resource = warden.authenticate!(auth_options)
-      sign_in(resource_name, resource)
-      respond_with(resource)
+      sign_in(resource_name, resource) # this triggers JWT dispatch
+      respond_with(resource) 
     end
 
     private
@@ -24,7 +26,8 @@ module Platform
       }, status: :ok
     end
 
-    def respond_to_on_destroy(_resource = nil)
+    # DELETE /logout
+    def respond_to_on_destroy(_resource = nil) # resource = nil
       render json: {
         status: { code: 200, message: 'Logged out successfully.' }
       }, status: :ok

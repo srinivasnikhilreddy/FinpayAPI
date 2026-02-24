@@ -6,7 +6,14 @@ module Api
       before_action :set_account, only: [:show, :update, :destroy]
 
       def index
-        accounts = paginate(Account.order(:name))
+        accounts =
+          if current_user.admin?
+            Account.order(:name)
+          else
+            current_user.accounts.order(:name)
+          end
+
+        accounts = paginate(accounts)
 
         render json: {
           data: AccountSerializer.new(accounts),
@@ -58,7 +65,12 @@ module Api
       private
 
       def set_account
-        @account = Account.find(params[:id])
+        @account =
+          if current_user.admin?
+            Account.find(params[:id]) # admin can access all
+          else
+            current_user.accounts.find(params[:id]) # others only their own
+          end
       end
 
       def account_params
