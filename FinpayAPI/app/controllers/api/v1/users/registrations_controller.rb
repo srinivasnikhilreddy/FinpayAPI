@@ -17,12 +17,12 @@ module Api
 
           if resource.save # => self.resource = User.create(sign_up_params)
             render json: {
-              status: { code: 200, message: 'Signed up successfully.' },
+              status: { code: 200, message: I18.t("auth.signup.success") },
               data: UserSerializer.new(resource)
             }, status: :created
           else
             render json: {
-              status: { code: 422, message: "User couldn't be created successfully." },
+              status: { code: 422, message: I18.t("auth.signup.failure") },
               errors: resource.errors.messages
             }, status: :unprocessable_entity
           end

@@ -1,7 +1,7 @@
 module Platform
   class CompaniesController < BaseController
     before_action :require_super_admin!
-    before_action :set_company, only: [:show, :destroy]
+    before_action :company, only: [:show, :destroy]
 
     def index
       companies = paginate(Company.all)
@@ -13,13 +13,13 @@ module Platform
     end
 
     def show
-      render json: CompanySerializer.new(@company)
+      render json: CompanySerializer.new(company)
     end
 
     def create
-      @company = CompanyProvisioningService.call!(company_params)
+      company = CompanyProvisioningService.call!(company_params)
 
-      render json: CompanySerializer.new(@company),
+      render json: CompanySerializer.new(company),
              status: :created
 
     rescue ActiveRecord::RecordInvalid => e
@@ -28,16 +28,16 @@ module Platform
     end
 
     def destroy
-      CompanyDeprovisioningService.call!(@company)
+      CompanyDeprovisioningService.call!(company)
 
-      render json: { message: "Company deleted successfully" },
+      render json: { message: I18n.t("platform.companies.deleted") },
              status: :ok
     end
 
     private
 
-    def set_company
-      @company = Company.find(params[:id])
+    def company
+      @company ||= Company.find(params[:id])
     end
 
     def company_params

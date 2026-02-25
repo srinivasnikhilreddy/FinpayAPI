@@ -17,7 +17,7 @@ module Platform
 
     def respond_with(resource, _opts = {})
       render json: {
-        status: { code: 200, message: 'Platform login successful.' },
+        status: { code: 200, message: I18n.t("platform.auth.login_success") },
         data: {
           id: resource.id,
           email: resource.email,
@@ -29,7 +29,7 @@ module Platform
     # DELETE /logout
     def respond_to_on_destroy(_resource = nil) # resource = nil
       render json: {
-        status: { code: 200, message: 'Logged out successfully.' }
+        status: { code: 200, message: I18n.t("platform.auth.logout_success") }
       }, status: :ok
     end
 

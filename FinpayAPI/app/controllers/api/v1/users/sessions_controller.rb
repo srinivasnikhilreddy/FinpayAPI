@@ -12,12 +12,17 @@ module Api
         # POST /login
         def create
           # Devise uses Warden, Warden runs database_authenticatable. It checks: email, encrypted_password (bcrypt compare), If valid -> authentication success
+          # Warden sets current_user = user i.e., env['warden'].set_user(user) => can access with request.env['warden']
+          # Devise exposes current_user.
           self.resource = warden.authenticate!(auth_options)
-
+          # def auth_options
+          #   { scope: resource_name, recall: "#{controller_path}#new" }
+          # end
+          
           sign_in(resource_name, resource) # this triggers JWT dispatches -> devise-jwt middleware builds jwt payload (adds sub, exp, jti, claims), signs token with secret key and adds header
-
+          # resource_name = :user ("user"/Symbol("user")), resource = user
           render json: {
-            status: { code: 200, message: 'Logged in successfully.' },
+            status: { code: 200, message: I18.t("auth.login.success") },
             data: UserSerializer.new(resource)
           }, status: :ok
         end
@@ -30,7 +35,7 @@ module Api
         # DELETE /logout
         def respond_to_on_destroy(_resource = nil) # resource = nil
           render json: {
-            status: { code: 200, message: 'Logged out successfully.' }
+            status: { code: 200, message: I18.t("auth.login.logout") }
           }, status: :ok
         end
         # Devise: Finds user, Changes user's jti, Old token's jti no longer matches DB, Old token becomes invalid

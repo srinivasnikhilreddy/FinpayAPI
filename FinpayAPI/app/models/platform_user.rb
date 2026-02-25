@@ -20,9 +20,19 @@ class PlatformUser < ApplicationRecord
 
   def jwt_payload
     super.merge({
+      'name' => name,
       'role' => role
     })
   end
+=begin
+{
+  "sub": user_id,
+  "jti": "...",
+  "exp": 12345678,
+  "name": "Srinivas",
+  "role": "admin"
+}
+=end
 
   private
 

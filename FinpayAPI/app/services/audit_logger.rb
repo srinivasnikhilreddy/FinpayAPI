@@ -1,6 +1,7 @@
 # app/services/audit_logger.rb
 
 class AuditLogger
+  # Create a new audit log
   def self.log!(user:, action:, resource: nil, request: nil, metadata: {})
     AuditLog.create!(
       user_id: user&.id,

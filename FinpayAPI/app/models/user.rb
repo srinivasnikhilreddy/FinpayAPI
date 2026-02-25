@@ -1,8 +1,10 @@
 class User < ApplicationRecord
-  has_many :accounts, dependent: :destroy
+  # Associations
+  has_many :accounts, dependent: :destroy # delete on cascade
   has_many :expenses, dependent: :destroy
-  has_many :approvals, foreign_key: :approver_id, dependent: :nullify
+  has_many :approvals, foreign_key: :approver_id, dependent: :nullify # nullify on cascade
 
+  # Devise
   devise :database_authenticatable,
          :registerable,
          :recoverable,
@@ -15,17 +17,19 @@ class User < ApplicationRecord
   # The bearer of the token has access granted to it and no further authentication is needed. it somehow falls into the wrong hands, someone could access protected content and tamper with things.
   include Devise::JWT::RevocationStrategies::JTIMatcher
 
+  # Enum
   enum role: {
     employee: "employee",
     manager: "manager",
     admin: "admin"
   }
 
+  # Validations
   validates :email, presence: true, uniqueness: true
   validates :name, presence: true
   validates :role, presence: true, inclusion: { in: roles.keys }
 
-  # JWT token revocation
+  # JWT custom payload
   def jwt_payload
     super.merge({
       'name' => name,

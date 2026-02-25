@@ -3,7 +3,7 @@ module Api
     class AccountsController < ApplicationController
       before_action :require_manager_or_admin!, only: [:index, :show]
       before_action :require_admin!, only: [:create, :update, :destroy]
-      before_action :set_account, only: [:show, :update, :destroy]
+      before_action :account, only: [:show, :update, :destroy]
 
       def index
         accounts =
@@ -22,50 +22,50 @@ module Api
       end
 
       def show
-        render json: AccountSerializer.new(@account)
+        render json: AccountSerializer.new(account)
       end
 
       def create
-        @account = Account.new(account_params)
+        account = Account.new(account_params)
 
-        if @account.save
-          render json: AccountSerializer.new(@account), status: :created
+        if account.save
+          render json: AccountSerializer.new(account), status: :created
         else
           render json: {
-            error: "Account couldn't be created",
-            details: @account.errors.messages
+            error: I18n.t("accounts.create_failed"),
+            details: account.errors.messages
           }, status: :unprocessable_entity
         end
       end
 
       def update
-        if @account.update(account_params)
-          render json: AccountSerializer.new(@account)
+        if account.update(account_params)
+          render json: AccountSerializer.new(account)
         else
           render json: {
-            error: "Account couldn't be updated",
-            details: @account.errors.messages
+            error: I18n.t("accounts.update_failed"),
+            details: account.errors.messages
           }, status: :unprocessable_entity
         end
       end
 
       def destroy
-        @account.soft_delete!
+        account.soft_delete!
 
         AuditLogger.log!(
           user: current_user,
           action: "account_soft_deleted",
-          resource: @account,
+          resource: account,
           request: request
         )
 
-        render json: { message: "Account deleted successfully" }
+        render json: { message: I18n.t("accounts.deleted") }
       end
 
       private
 
-      def set_account
-        @account =
+      def account
+        @account ||=
           if current_user.admin?
             Account.find(params[:id]) # admin can access all
           else

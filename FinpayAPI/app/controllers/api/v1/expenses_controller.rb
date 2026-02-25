@@ -2,7 +2,7 @@ module Api
   module V1
     # Employee -> Create Expense -> Manager/Admin Review -> Approve/Reject -> Finance processes payment
     class ExpensesController < ApplicationController
-      before_action :set_expense, only: [:show, :update, :destroy]
+      before_action :expense, only: [:show, :update, :destroy]
       before_action :authorize_expense!, only: [:show, :update, :destroy]
 
       def index
@@ -22,52 +22,52 @@ module Api
       end
 
       def show
-        render json: ExpenseSerializer.new(@expense)
+        render json: ExpenseSerializer.new(expense)
       end
 
       def create
-        @expense = current_user.expenses.build(expense_params)
-        if @expense.save
+        expense = current_user.expenses.build(expense_params)
+        if expense.save
           AuditLogger.log!(
             user: current_user,
-            action: "expense_created",
-            resource: @expense,
+            action: I18n.t("expenses.created"),
+            resource: expense,
             request: request
           )
-          render json: ExpenseSerializer.new(@expense), status: :created
+          render json: ExpenseSerializer.new(expense), status: :created
         else
-          render json: { error: "Expense couldn't be created", details: @expense.errors.messages }, status: :unprocessable_entity
+          render json: { error: I18n.t("expenses.create_failed"), details: expense.errors.messages }, status: :unprocessable_entity
         end
       end
 
       def update
-        if @expense.update(expense_params)
-          render json: ExpenseSerializer.new(@expense)
+        if expense.update(expense_params)
+          render json: ExpenseSerializer.new(expense)
         else
           render json: {
-            error: "Expense couldn't be updated",
-            details: @expense.errors.messages
+            error: I18n.t("expeneses.update_failed"),
+            details: expense.errors.messages
           }, status: :unprocessable_entity
         end
       end
 
       def destroy
-        @expense.soft_delete!
+        expense.soft_delete!
 
         AuditLogger.log!(
           user: current_user,
           action: "expense_soft_deleted",
-          resource: @expense,
+          resource: expense,
           request: request
         )
 
-        render json: { message: "Expense deleted successfully" }
+        render json: { message: I18n.t("expenses.deleted") }
       end
 
       private
 
-      def set_expense
-        @expense = Expense.find(params[:id])
+      def expense
+        @expense ||= Expense.find(params[:id])
       end
 
       def expense_params
@@ -76,7 +76,7 @@ module Api
 
       def authorize_expense!
         return if current_user.admin?
-        return if @expense.user_id == current_user.id && (current_user.employee? || current_user.manager?)
+        return if expense.user_id == current_user.id && (current_user.employee? || current_user.manager?)
         render_forbidden
       end
     end

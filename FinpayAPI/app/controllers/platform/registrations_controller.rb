@@ -14,7 +14,7 @@ module Platform
 
       if resource.save # self.resource = PlatformUser.create(sign_up_params)
         render json: {
-          status: { code: 201, message: "Platform user registered." },
+          status: { code: 201, message: I18n.t("platform.auth.register_success") },
           data: {
             id: resource.id,
             email: resource.email,

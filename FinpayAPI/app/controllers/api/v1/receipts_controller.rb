@@ -1,7 +1,7 @@
 module Api
   module V1
     class ReceiptsController < ApplicationController
-      before_action :set_receipt, only: [:show, :update, :destroy]
+      before_action :receipt, only: [:show, :update, :destroy]
       before_action :require_admin!, only: [:destroy]
 
       def index
@@ -16,7 +16,7 @@ module Api
       end
 
       def show
-        render json: ReceiptSerializer.new(@receipt)
+        render json: ReceiptSerializer.new(receipt)
       end
 
       def create
@@ -38,22 +38,22 @@ module Api
       end
 
       def update
-        if @receipt.update(receipt_params.except(:expense_id))
-          render json: ReceiptSerializer.new(@receipt)
+        if receipt.update(receipt_params.except(:expense_id))
+          render json: ReceiptSerializer.new(receipt)
         else
-          render json: { errors: @receipt.errors.full_messages },
+          render json: { errors: receipt.errors.full_messages },
                  status: :unprocessable_entity
         end
       end
 
       def destroy
-        @receipt.destroy
+        receipt.destroy
         head :no_content
       end
 
       private
 
-      def set_receipt
+      def receipt
         @receipt =
           if current_user.admin? || current_user.manager?
             Receipt.find(params[:id])

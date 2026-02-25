@@ -17,13 +17,13 @@ class Account < ApplicationRecord
   end
 
   def withdraw(amount)
-    raise StandardError, "Insufficient funds" if balance < amount
+    raise StandardError, I18n.t("transactions.insufficient_funds") if balance < amount
     update!(balance: balance - BigDecimal(amount.to_s))
   end
 
   private
 
   def normalize_balance
-    self.balance = BigDecimal(balance.to_s)
+    self.balance = BigDecimal(balance.to_s || "0")
   end
 end

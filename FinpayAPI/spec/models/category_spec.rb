@@ -1,3 +1,9 @@
+RSpec.describe Category, type: :model do
+  it { should validate_presence_of(:name) }
+  it { should validate_uniqueness_of(:name) }
+end
+
+=begin
 require 'rails_helper'
 
 RSpec.describe Category, type: :model do
@@ -17,3 +23,4 @@ RSpec.describe Category, type: :model do
     expect(duplicate).not_to be_valid
   end
 end
+=end

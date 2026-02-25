@@ -3,9 +3,10 @@ module Api
     class TransactionsController < ApplicationController
       before_action :require_manager_or_admin!, only: [:index, :show]
       before_action :require_admin!, only: [:create, :destroy]
-      before_action :set_transaction, only: [:show, :destroy]
+      before_action :transaction, only: [:show, :destroy]
 
       def index
+        # instead of SELECT * FROM transactions; with pagination and eager loading => SELECT * FROM transactions ORDER BY created_at DESC LIMIT 25 OFFSET 0;
         transactions = paginate(Transaction.includes(:account).order(created_at: :desc))
         render json: {
           data: TransactionSerializer.new(transactions),
@@ -14,7 +15,7 @@ module Api
       end
 
       def show
-        render json: TransactionSerializer.new(@transaction)
+        render json: TransactionSerializer.new(transaction)
       end
 
       def create
@@ -28,22 +29,22 @@ module Api
       end
 
       def destroy
-        @transaction.soft_delete!
+        transaction.soft_delete!
 
         AuditLogger.log!(
           user: current_user,
-          action: "transaction_deleted",
-          resource: @transaction,
+          action: I18n.t("transactions.deleted"),
+          resource: transaction,
           request: request
         )
         
-        render json: { message: "Transaction deleted successfully" }, status: :ok
+        render json: { message: I18n.t("transactions.deleted") }, status: :ok
       end
 
       private
 
-      def set_transaction
-        @transaction = Transaction.find(params[:id])
+      def transaction
+        @transaction ||= Transaction.find(params[:id])
       end
 
       def transaction_params

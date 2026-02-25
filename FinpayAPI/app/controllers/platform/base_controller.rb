@@ -9,10 +9,8 @@ module Platform
 
     wrap_parameters format: [:json]
 
-    before_action :configure_permitted_parameters, if: :devise_controller?
-
     rescue_from ActiveRecord::RecordNotFound do |e|
-      render json: { error: "Record not found: #{e.message}" }, status: :not_found
+      render json: { error: "#{I18n.t("common.not_found")} #{e.message}" }, status: :not_found
     end
 
     rescue_from ActiveRecord::RecordInvalid do |e|
@@ -21,15 +19,10 @@ module Platform
 
     rescue_from StandardError do |e|
       Rails.logger.error("Uncaught exception: #{e.class} - #{e.message}")
-      render json: { error: "Internal Server Error" }, status: :internal_server_error
+      render json: { error: I18n.t("common.internal_server_error") }, status: :internal_server_error
     end
 
     protected
-
-    def configure_permitted_parameters
-      devise_parameter_sanitizer.permit(:sign_up, keys: [:email, :password, :password_confirmation])
-      devise_parameter_sanitizer.permit(:sign_in, keys: [:email, :password])
-    end
 
     def paginate(records)
       page = params[:page].present? ? params[:page].to_i : 1
@@ -52,3 +45,14 @@ module Platform
     end
   end
 end
+
+=begin
+    before_action :configure_permitted_parameters, if: :devise_controller?
+
+    protected
+    
+    def configure_permitted_parameters
+      devise_parameter_sanitizer.permit(:sign_up, keys: [:email, :password, :password_confirmation])
+      devise_parameter_sanitizer.permit(:sign_in, keys: [:email, :password])
+    end
+=end
