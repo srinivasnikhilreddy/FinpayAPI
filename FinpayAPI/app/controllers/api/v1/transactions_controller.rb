@@ -9,9 +9,9 @@ module Api
         # instead of SELECT * FROM transactions; with pagination and eager loading => SELECT * FROM transactions ORDER BY created_at DESC LIMIT 25 OFFSET 0;
         transactions = paginate(Transaction.includes(:account).order(created_at: :desc))
         render json: {
-          data: TransactionSerializer.new(transactions),
+          data: TransactionListSerializer.new(transactions),
           meta: pagination_meta(transactions)
-        }  
+        }
       end
 
       def show

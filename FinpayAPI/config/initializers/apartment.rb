@@ -1,6 +1,7 @@
 require 'apartment/elevators/generic'
 
 Apartment.configure do |config|
+  # Excluded models always stay in public schema.
   config.excluded_models = %w[
     Company
     PlatformUser

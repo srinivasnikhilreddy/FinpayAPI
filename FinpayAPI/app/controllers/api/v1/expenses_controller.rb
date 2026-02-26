@@ -6,17 +6,22 @@ module Api
       before_action :authorize_expense!, only: [:show, :update, :destroy]
 
       def index
-        # The N+1 problem happens when: You load 1 main query, Then Rails runs N additional queries (one per record), Instead of loading everything in just 1–2 optimized queries
-        # We can solve this by using includes method to load all the data at once and avoid N+1 problem
-        expenses = if current_user.admin? || current_user.manager?
-                    Expense.includes(:user, :category, approvals: :approver) # resolves N+1 problem
-                  else
-                    current_user.expenses.includes(:category, approvals: :approver) # resolves N+1 problem
-                  end
+        expenses = base_scope
+
+        expenses = expenses.where(category_id: params[:category_id]) if params[:category_id].present? # filter based on category
+
+        if params[:status].present? # filter based on status
+          expenses = expenses.where(status: params[:status])
+        end
+
+        if params[:from_date].present? && params[:to_date].present? # filter based on date
+          expenses = expenses.where(created_at: params[:from_date]..params[:to_date])
+        end
+
         expenses = paginate(expenses.order(created_at: :desc))
 
         render json: {
-          data: ExpenseSerializer.new(expenses),
+          data: ExpenseListSerializer.new(expenses),
           meta: pagination_meta(expenses)
         }
       end
@@ -65,6 +70,17 @@ module Api
       end
 
       private
+
+      def base_scope
+        # The N+1 problem happens when: You load 1 main query, Then Rails runs N additional queries (one per record), Instead of loading everything in just 1–2 optimized queries
+        # We can solve this by using includes method to load all the data at once and avoid N+1 problem
+        @base_scope ||=
+        if current_user.admin? || current_user.manager?
+          Expense.includes(:user, :category) # resolves N+1 problem
+        else
+          current_user.expenses.includes(:category) # resolves N+1 problem
+        end
+      end
 
       def expense
         @expense ||= Expense.find(params[:id])

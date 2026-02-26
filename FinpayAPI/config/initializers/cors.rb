@@ -5,20 +5,15 @@
 
 # Read more: https://github.com/cyu/rack-cors
 
-# Rails.application.config.middleware.insert_before 0, Rack::Cors do
-#   allow do
-#     origins "example.com"
-#
-#     resource "*",
-#       headers: :any,
-#       methods: [:get, :post, :put, :patch, :delete, :options, :head]
-#   end
-# end
+
+# uncommented the following lines to allow CORS requests from any origin. You can restrict this in production by replacing '*' with the actual domain of your frontend app.
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
     origins '*'
-    resource '*',
+
+    resource "*",
       headers: :any,
-      methods: [:get, :post, :put, :patch, :delete, :options]
+      methods: [:get, :post, :put, :patch, :delete, :options, :head],
+      expose: [:Authorization] # Expose the Authorization header to the frontend/client/postman application
   end
 end

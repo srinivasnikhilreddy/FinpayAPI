@@ -22,7 +22,7 @@ module Api
           sign_in(resource_name, resource) # this triggers JWT dispatches -> devise-jwt middleware builds jwt payload (adds sub, exp, jti, claims), signs token with secret key and adds header
           # resource_name = :user ("user"/Symbol("user")), resource = user
           render json: {
-            status: { code: 200, message: I18.t("auth.login.success") },
+            status: { code: 200, message: I18n.t("auth.login.success") },
             data: UserSerializer.new(resource)
           }, status: :ok
         end
@@ -35,7 +35,7 @@ module Api
         # DELETE /logout
         def respond_to_on_destroy(_resource = nil) # resource = nil
           render json: {
-            status: { code: 200, message: I18.t("auth.login.logout") }
+            status: { code: 200, message: I18n.t("auth.login.logout") }
           }, status: :ok
         end
         # Devise: Finds user, Changes user's jti, Old token's jti no longer matches DB, Old token becomes invalid

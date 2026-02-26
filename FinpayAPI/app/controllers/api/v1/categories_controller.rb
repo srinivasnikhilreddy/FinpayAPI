@@ -8,7 +8,7 @@ module Api
         categories = paginate(Category.order(:name))
 
         render json: {
-          data: CategorySerializer.new(categories),
+          data: CategoryListSerializer.new(categories),
           meta: pagination_meta(categories)
         }
       end

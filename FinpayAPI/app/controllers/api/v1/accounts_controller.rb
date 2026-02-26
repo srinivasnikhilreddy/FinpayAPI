@@ -6,17 +6,12 @@ module Api
       before_action :account, only: [:show, :update, :destroy]
 
       def index
-        accounts =
-          if current_user.admin?
-            Account.order(:name)
-          else
-            current_user.accounts.order(:name)
-          end
+        accounts = base_scope
 
         accounts = paginate(accounts)
 
         render json: {
-          data: AccountSerializer.new(accounts),
+          data: AccountListSerializer.new(accounts),
           meta: pagination_meta(accounts)
         }
       end
@@ -63,6 +58,15 @@ module Api
       end
 
       private
+
+      def base_scope
+        @base_scope ||=
+          if current_user.admin?
+            Account.order(:name)
+          else
+            current_user.accounts.order(:name)
+          end
+      end
 
       def account
         @account ||=

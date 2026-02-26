@@ -1,4 +1,8 @@
+require 'rails_helper'
+
 RSpec.describe Receipt, type: :model do
+  subject { create(:receipt) }
+  
   it { should validate_presence_of(:file_url) }
   it { should validate_numericality_of(:amount).is_greater_than(0) }
   it { should belong_to(:expense) }

@@ -1,16 +1,5 @@
-# frozen_string_literal: true
-
-# Assuming you have not yet modified this file, each configuration option below
-# is set to its default value. Note that some are commented out while others
-# are not: uncommented lines are intended to protect your configuration from
-# breaking changes in upgrades (i.e., in the event that future versions of
-# Devise change the default values for those options).
-#
-# Use this hook to configure devise mailer, warden hooks and so forth.
-# Many of these configuration options can be set straight in your model.
 Devise.setup do |config|
 
-  
   config.navigational_formats = [] #We need to tell devise we will not use navigational formats like :html, so that it will not redirect to the sign in page when the user does not have access, but instead return 401 for formats like :xml or :json.
   
   config.skip_session_storage = [:http_auth, :params_auth]
@@ -333,7 +322,8 @@ Devise.setup do |config|
   
   
   config.jwt do |jwt|
-    jwt.secret = Rails.application.credentials.devise_jwt_secret_key! # ! is a bang method -> instead of returning nil, it will raise an error, which is useful for debugging and ensuring that the key is properly set.
+    jwt.secret = ENV['DEVISE_JWT_SECRET_KEY'] || Rails.application.credentials.devise_jwt_secret_key! # ! is a bang method -> instead of returning nil, it will raise an error, which is useful for debugging and ensuring that the key is properly set.
+    
     jwt.dispatch_requests = [
       ['POST', %r{^/platform/login$}],
       ['POST', %r{^/login$}] # Devise JWT module: Builds JWT payload. Signs it using your secret. Adds it to response header.

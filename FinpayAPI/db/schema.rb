@@ -20,7 +20,9 @@ ActiveRecord::Schema[7.0].define(version: 2026_02_24_060822) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
+    t.bigint "user_id", null: false
     t.index ["deleted_at"], name: "index_accounts_on_deleted_at"
+    t.index ["user_id"], name: "index_accounts_on_user_id"
   end
 
   create_table "approvals", force: :cascade do |t|
@@ -58,7 +60,6 @@ ActiveRecord::Schema[7.0].define(version: 2026_02_24_060822) do
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["name"], name: "index_categories_on_name", unique: true
   end
 
   create_table "companies", force: :cascade do |t|
@@ -139,6 +140,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_02_24_060822) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "accounts", "users"
   add_foreign_key "approvals", "expenses"
   add_foreign_key "approvals", "users", column: "approver_id"
   add_foreign_key "expenses", "categories"

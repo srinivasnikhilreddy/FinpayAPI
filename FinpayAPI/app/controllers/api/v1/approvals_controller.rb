@@ -8,7 +8,7 @@ module Api
         approvals = paginate(Approval.includes(:expense, :approver).order(created_at: :desc))
         
         render json: {
-          data: ApprovalSerializer.new(approvals),
+          data: ApprovalListSerializer.new(approvals),
           meta: pagination_meta(approvals)
         }
       end

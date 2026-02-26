@@ -7,8 +7,9 @@ module Api
       # GET /api/v1/users
       def index
         users = paginate(User.order(created_at: :desc))
+        
         render json: {
-          data: UserSerializer.new(users),
+          data: UserListSerializer.new(users),
           meta: pagination_meta(users)
         }
       end

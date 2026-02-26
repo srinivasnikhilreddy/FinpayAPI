@@ -5,14 +5,9 @@ module Api
       before_action :require_admin!, only: [:destroy]
 
       def index
-        expense =
-          if current_user.admin? || current_user.manager?
-            Expense.find(params[:expense_id])
-          else
-            current_user.expenses.find(params[:expense_id])
-          end
+        expense = base_scope
 
-        render json: ReceiptSerializer.new(expense.receipts)
+        render json: ReceiptListSerializer.new(expense.receipts)
       end
 
       def show
@@ -20,12 +15,7 @@ module Api
       end
 
       def create
-        expense =
-          if current_user.admin? || current_user.manager?
-            Expense.find(params[:expense_id])
-          else
-            current_user.expenses.find(params[:expense_id])
-          end
+        expense = base_scope
 
         receipt = expense.receipts.build(receipt_params.except(:expense_id))
 
@@ -52,6 +42,15 @@ module Api
       end
 
       private
+
+      def base_scope
+        @base_scope ||=
+          if current_user.admin? || current_user.manager?
+            Expense.find(params[:expense_id]) # return expense object by id
+          else
+            current_user.expenses.find(params[:expense_id])
+          end
+      end
 
       def receipt
         @receipt =
