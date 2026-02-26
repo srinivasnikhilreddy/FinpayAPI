@@ -7,18 +7,12 @@ module Api
 
       def index
         expenses = base_scope
+                      .filter_by(by_category: params[:by_category],
+                                 by_status: params[:by_status],
+                                 between_dates: [params[:from_date], params[:to_date]])
+                      .order(created_at: :desc)
 
-        expenses = expenses.where(category_id: params[:category_id]) if params[:category_id].present? # filter based on category
-
-        if params[:status].present? # filter based on status
-          expenses = expenses.where(status: params[:status])
-        end
-
-        if params[:from_date].present? && params[:to_date].present? # filter based on date
-          expenses = expenses.where(created_at: params[:from_date]..params[:to_date])
-        end
-
-        expenses = paginate(expenses.order(created_at: :desc))
+        expenses = paginate(expenses)
 
         render json: {
           data: ExpenseListSerializer.new(expenses),
@@ -50,7 +44,7 @@ module Api
           render json: ExpenseSerializer.new(expense)
         else
           render json: {
-            error: I18n.t("expeneses.update_failed"),
+            error: I18n.t("expenses.update_failed"),
             details: expense.errors.messages
           }, status: :unprocessable_entity
         end
@@ -83,7 +77,7 @@ module Api
       end
 
       def expense
-        @expense ||= Expense.find(params[:id])
+        @expense ||= base_scope.find(params[:id])
       end
 
       def expense_params
