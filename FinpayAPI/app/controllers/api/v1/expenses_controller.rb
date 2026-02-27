@@ -1,46 +1,93 @@
 module Api
   module V1
+    # Employee -> Create Expense -> Manager/Admin Review -> Approve/Reject -> Finance processes payment
     class ExpensesController < ApplicationController
-      before_action :set_expense, only: [:show, :update, :destroy]
+      before_action :expense, only: [:show, :update, :destroy]
+      before_action :authorize_expense!, only: [:show, :update, :destroy]
 
       def index
-        render json: Expense.all
+        expenses = base_scope
+                      .filter_by(by_category: params[:by_category],
+                                 by_status: params[:by_status],
+                                 between_dates: [params[:from_date], params[:to_date]])
+                      .order(created_at: :desc)
+
+        expenses = paginate(expenses)
+
+        render json: {
+          data: ExpenseListSerializer.new(expenses),
+          meta: pagination_meta(expenses)
+        }
       end
 
       def show
-        render json: @expense
+        render json: ExpenseSerializer.new(expense)
       end
 
       def create
-        expense = Expense.new(expense_params)
+        expense = current_user.expenses.build(expense_params)
         if expense.save
-          render json: expense, status: :created
+          AuditLogger.log!(
+            user: current_user,
+            action: I18n.t("expenses.created"),
+            resource: expense,
+            request: request
+          )
+          render json: ExpenseSerializer.new(expense), status: :created
         else
-          render json: { errors: expense.errors.full_messages }, status: :unprocessable_entity
+          render json: { error: I18n.t("expenses.create_failed"), details: expense.errors.messages }, status: :unprocessable_entity
         end
       end
 
       def update
-        if @expense.update(expense_params)
-          render json: @expense
+        if expense.update(expense_params)
+          render json: ExpenseSerializer.new(expense)
         else
-          render json: { errors: @expense.errors.full_messages }, status: :unprocessable_entity
+          render json: {
+            error: I18n.t("expenses.update_failed"),
+            details: expense.errors.messages
+          }, status: :unprocessable_entity
         end
       end
 
       def destroy
-        @expense.destroy
-        render json: { message: "Expense deleted successfully" }
+        expense.soft_delete!
+
+        AuditLogger.log!(
+          user: current_user,
+          action: "expense_soft_deleted",
+          resource: expense,
+          request: request
+        )
+
+        render json: { message: I18n.t("expenses.deleted") }
       end
 
       private
 
-      def set_expense
-        @expense = Expense.find(params[:id])
+      def base_scope
+        # The N+1 problem happens when: You load 1 main query, Then Rails runs N additional queries (one per record), Instead of loading everything in just 1–2 optimized queries
+        # We can solve this by using includes method to load all the data at once and avoid N+1 problem
+        @base_scope ||=
+        if current_user.admin? || current_user.manager?
+          Expense.includes(:user, :category) # resolves N+1 problem
+        else
+          current_user.expenses.includes(:category) # resolves N+1 problem
+        end
+      end
+
+      def expense
+        @expense ||= base_scope.find(params[:id])
       end
 
       def expense_params
-        params.require(:expense).permit(:amount, :description, :status, :user_id, :category_id)
+        params.require(:expense).permit(:amount, :description, :category_id)
+      end
+
+      def authorize_expense!
+        return if current_user.admin?
+        return if expense.user_id == current_user.id && (current_user.employee? || current_user.manager?)
+        render_forbidden
       end
     end
   end

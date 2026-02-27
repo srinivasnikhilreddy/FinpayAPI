@@ -7,6 +7,16 @@ Rails.application.configure do
   # Allow requests from lvh.me and its subdomains (e.g., tenant1.lvh.me, tenant2.lvh.me)
   config.hosts << /.*\.lvh\.me/
 
+  config.after_initialize do
+    Bullet.enable = true
+    Bullet.alert = true
+    Bullet.console = true
+    Bullet.rails_logger = true
+
+    Bullet.n_plus_one_query_enable = true
+    Bullet.unused_eager_loading_enable = true
+    Bullet.counter_cache_enable = true
+  end
 
   # In the development environment your application's code is reloaded any time
   # it changes. This slows down response time but is perfect for development

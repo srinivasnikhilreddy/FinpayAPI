@@ -1,5 +1,7 @@
 class Api::TestController < ApplicationController
+  before_action :authenticate_user!
+
   def index
-    render json: { tenant: Apartment::Tenant.current }
+    render json: { message: "You are authenticated" }
   end
 end

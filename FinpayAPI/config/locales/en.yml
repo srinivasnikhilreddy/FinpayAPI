@@ -30,4 +30,81 @@
 # available at https://guides.rubyonrails.org/i18n.html.
 
 en:
-  hello: "Hello world"
+  common:
+    forbidden: "Forbidden"
+    not_found: "Record not found"
+    internal_server_error: "Internal Server Error"
+    validation_failed: "Validation failed"
+
+  auth:
+    signup:
+      success: "Signed up successfully."
+      failure: "User couldn't be created successfully."
+    login:
+      success: "Logged in successfully."
+      failure: "Invalid email or password."
+    logout:
+      success: "Logged out successfully."
+
+  users:
+    created: "User created successfully."
+    updated: "User updated successfully."
+    deleted: "User deleted successfully."
+    create_failed: "User couldn't be created."
+    update_failed: "User couldn't be updated."
+    last_admin_delete: "Cannot delete the last admin."
+    last_admin_downgrade: "Cannot downgrade the last admin."
+
+  categories:
+    created: "Category created successfully."
+    updated: "Category updated successfully."
+    deleted: "Category deleted successfully."
+    create_failed: "Category couldn't be created."
+    update_failed: "Category couldn't be updated."
+    delete_failed: "Category couldn't be deleted."
+
+  accounts:
+    created: "Account created successfully."
+    updated: "Account updated successfully."
+    deleted: "Account deleted successfully."
+    create_failed: "Account couldn't be created."
+    delete_failed: "Account couldn't be deleted."
+    update_failed: "Account couldn't be updated."
+
+  expenses:
+    created: "Expense created successfully."
+    updated: "Expense updated successfully."
+    deleted: "Expense deleted successfully."
+    create_failed: "Expense couldn't be created."
+    update_failed: "Expense couldn't be updated."
+
+  approvals:
+    created: "Approval created successfully."
+    updated: "Approval updated successfully."
+    deleted: "Approval deleted successfully."
+    create_failed: "Approval couldn't be created."
+    update_failed: "Approval couldn't be updated."
+
+  transactions:
+    created: "Transaction processed successfully."
+    deleted: "Transaction deleted successfully."
+    insufficient_funds: "Insufficient funds."
+    missing_idempotency_key: "Missing Idempotency-Key."
+
+  receipts:
+    created: "Receipt created successfully."
+    updated: "Receipt updated successfully."
+    deleted: "Receipt deleted successfully."
+
+  audit_logs:
+    access_denied: "Admin access required."
+
+  platform:
+    auth:
+      login_success: "Platform login successful."
+      logout_success: "Logged out successfully."
+      register_success: "Platform user registered."
+    companies:
+      created: "Company created successfully."
+      deleted: "Company deleted successfully."
+      create_failed: "Company provisioning failed."
