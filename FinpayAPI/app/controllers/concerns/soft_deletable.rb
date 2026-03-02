@@ -7,13 +7,15 @@ module SoftDeletable
   # Class methods:
   included do
     # Automatically exclude soft-deleted records
-    default_scope { where(deleted_at: nil) } # Account.all => SELECT * FROM accounts WHERE deleted_at IS NULL;
+    # default_scope { where(deleted_at: nil) } # Account.all => SELECT * FROM accounts WHERE deleted_at IS NULL;
+
+    scope :active, -> { where(deleted_at: nil) }
 
     # Include soft-deleted records
     scope :with_deleted, -> { unscope(where: :deleted_at) } # Remove any filtering on deleted_at column, means it returns all the records including deleted records
     
     # Only soft-deleted records
-    scope :only_deleted, -> { unscope(where: :deleted_at).where.not(deleted_at: nil) } # Show only records that were soft deleted, means it returns only deleted records
+    scope :only_deleted, -> { where.not(deleted_at: nil) } # Show only records that were soft deleted, means it returns only deleted records
   end
 
   # Instance methods:

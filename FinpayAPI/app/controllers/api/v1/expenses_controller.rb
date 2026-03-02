@@ -2,14 +2,14 @@ module Api
   module V1
     # Employee -> Create Expense -> Manager/Admin Review -> Approve/Reject -> Finance processes payment
     class ExpensesController < ApplicationController
-      before_action :expense, only: [:show, :update, :destroy]
+      before_action :expense, only: [:show, :update, :destroy, :approve, :reject]
       before_action :authorize_expense!, only: [:show, :update, :destroy]
+      before_action :authorize_manager!, only: [:approve, :reject, :reimburse, :archive]
 
       def index
         expenses = base_scope
-                      .filter_by(by_category: params[:by_category],
-                                 by_status: params[:by_status],
-                                 between_dates: [params[:from_date], params[:to_date]])
+                      .active
+                      .filter_by(filtering_params)
                       .order(created_at: :desc)
 
         expenses = paginate(expenses)
@@ -63,7 +63,44 @@ module Api
         render json: { message: I18n.t("expenses.deleted") }
       end
 
+      def approve
+        service = ExpenseWorkflowService.new(
+          expense: expense,
+          actor: current_user,
+          request: request
+        )
+
+        service.approve!
+
+        render json: ExpenseSerializer.new(expense)
+      rescue AASM::InvalidTransition
+        render_unprocessable("Invalid state transition")
+      end
+
+      def reject
+        service = ExpenseWorkflowService.new(
+          expense: expense,
+          actor: current_user,
+          request: request
+        )
+
+        service.reject!
+
+        render json: ExpenseSerializer.new(expense)
+      rescue AASM::InvalidTransition
+        render_unprocessable("Invalid state transition")
+      end
+
       private
+
+      def filtering_params
+        params.permit(
+          :by_category,
+          :by_status,
+          :from_date,
+          :to_date
+        )
+      end
 
       def base_scope
         # The N+1 problem happens when: You load 1 main query, Then Rails runs N additional queries (one per record), Instead of loading everything in just 1–2 optimized queries
@@ -86,7 +123,7 @@ module Api
 
       def authorize_expense!
         return if current_user.admin?
-        return if expense.user_id == current_user.id && (current_user.employee? || current_user.manager?)
+        return if expense.user == current_user && (current_user.employee? || current_user.manager?)
         render_forbidden
       end
     end

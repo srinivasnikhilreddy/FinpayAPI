@@ -18,4 +18,9 @@ module Authorizable
   def render_forbidden(message = "Forbidden")
     render json: { error: message }, status: :forbidden
   end
+
+  def authorize_manager!
+    return if current_user.admin? || current_user.manager?
+    render_forbidden
+  end
 end

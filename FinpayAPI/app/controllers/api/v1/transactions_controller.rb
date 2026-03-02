@@ -6,8 +6,13 @@ module Api
       before_action :transaction, only: [:show, :destroy]
 
       def index
+        transactions = Transaction
+                        .active
+                        .includes(:account)
+                        .order(created_at: :desc)
         # instead of SELECT * FROM transactions; with pagination and eager loading => SELECT * FROM transactions ORDER BY created_at DESC LIMIT 25 OFFSET 0;
-        transactions = paginate(Transaction.includes(:account).order(created_at: :desc))
+        transactions = paginate(transactions)
+
         render json: {
           data: TransactionListSerializer.new(transactions),
           meta: pagination_meta(transactions)

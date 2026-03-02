@@ -26,6 +26,10 @@ gem 'connection_pool'
 # schema based multi-tenancy
 gem 'ros-apartment', require: 'apartment'
 
+# AASM (Acts As State Machine) is a Ruby gem that lets you add a state machine to your models
+# It helps you manage state transitions safely and cleanly
+gem 'aasm'
+
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 7.0.10"
 
@@ -81,4 +85,3 @@ group :development do
   # detects and resolves common db query issues, specifically N+1 queries and unused eager loading (.includes)
   gem 'bullet'
 end
-
