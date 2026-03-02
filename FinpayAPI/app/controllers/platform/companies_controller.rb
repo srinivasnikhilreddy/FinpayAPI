@@ -7,7 +7,7 @@ module Platform
       companies = paginate(Company.all)
       # render json: { companies: companies } -> like ResponseEntity in Spring Boot
       render json: {
-        data: CompanyListSerializer.new(companies),
+        data: Api::V1::CompanyListSerializer.new(companies),
         meta: pagination_meta(companies)
       }
     end

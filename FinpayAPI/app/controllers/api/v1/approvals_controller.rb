@@ -2,11 +2,17 @@ module Api
   module V1
     class ApprovalsController < ApplicationController
       before_action :require_manager_or_admin!
-      before_action :approval, only: [:show, :update, :destroy]
+      before_action :approval, only: [:show, :update, :destroy, :approve, :reject]
+      before_action :authorize_manager!, only: [:approve, :reject]
 
       def index
-        approvals = paginate(Approval.includes(:expense, :approver).order(created_at: :desc))
-        
+        approvals = Approval
+                      .active
+                      .includes(:expense, :approver)
+                      .order(created_at: :desc)
+
+        approvals = paginate(approvals)
+
         render json: {
           data: ApprovalListSerializer.new(approvals),
           meta: pagination_meta(approvals)
@@ -23,7 +29,7 @@ module Api
         if approval.save
           render json: ApprovalSerializer.new(approval), status: :created
         else
-          render json: { error: I18n.t("approvals.create_failed"), details: approval.errors.messages }, status: :unprocessable_entity
+          render json: { error: approval.errors.full_messages }, status: :unprocessable_entity
         end
       end
 
@@ -48,6 +54,34 @@ module Api
         render json: { message: I18n.t("approvals.deleted") }, status: :ok
       end
 
+      def approve
+        service = ApprovalWorkflowService.new(
+          approval: approval,
+          actor: current_user,
+          request: request
+        )
+
+        service.approve!
+
+        render json: ApprovalSerializer.new(approval)
+      rescue AASM::InvalidTransition
+        render_unprocessable("Invalid transition")
+      end
+
+      def reject
+        service = ApprovalWorkflowService.new(
+          approval: approval,
+          actor: current_user,
+          request: request
+        )
+
+        service.reject!
+
+        render json: ApprovalSerializer.new(approval)
+      rescue AASM::InvalidTransition
+        render_unprocessable("Invalid transition")
+      end
+
       private
 
       def approval
@@ -55,7 +89,7 @@ module Api
       end
 
       def approval_params
-        params.require(:approval).permit(:expense_id, :approver_id, :status)
+        params.require(:approval).permit(:expense_id, :approver_id)
       end
     end
   end

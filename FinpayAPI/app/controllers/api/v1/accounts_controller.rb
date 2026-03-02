@@ -60,12 +60,16 @@ module Api
       private
 
       def base_scope
-        @base_scope ||=
-          if current_user.admin?
-            Account.order(:name)
-          else
-            current_user.accounts.order(:name)
-          end
+        @base_scope ||= begin
+          scope =
+            if current_user.admin?
+              Account
+            else
+              current_user.accounts
+            end
+
+          scope.active.order(:name)
+        end
       end
 
       def account
