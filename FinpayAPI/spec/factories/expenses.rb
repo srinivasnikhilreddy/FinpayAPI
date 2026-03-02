@@ -1,8 +1,7 @@
 FactoryBot.define do
   factory :expense do
     amount { 100 }
-    description { "Taxi" }
-    status { "pending" }
+    description { "Taxi ride" }
     association :user
     association :category
   end

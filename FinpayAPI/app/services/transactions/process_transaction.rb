@@ -28,13 +28,17 @@ class Transactions::ProcessTransaction
 
         account = Account.find(account_id)
 
-        transaction = create_transaction!(
-          params: params,
-          idempotency_key: idempotency_key
+        transaction = Transaction.create!(
+          params.merge(
+            idempotency_key: idempotency_key,
+            status: "pending"
+          )
         )
 
         apply_balance_update!(account, transaction)
 
+        transaction.update!(status: "completed")
+        
         AuditLogger.log!(
           user: current_user,
           action: "transaction_created",
@@ -66,7 +70,6 @@ class Transactions::ProcessTransaction
     if transaction.credit?
       account.deposit(transaction.amount)
     else
-      raise StandardError, I18n.t("transactions.insufficient_funds") if account.balance < transaction.amount
       account.withdraw(transaction.amount)
     end
   end

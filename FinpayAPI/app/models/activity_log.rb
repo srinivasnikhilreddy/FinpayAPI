@@ -1,0 +1,6 @@
+class ActivityLog < ApplicationRecord
+  belongs_to :user
+  belongs_to :expense
+
+  validates :action, presence: true
+end

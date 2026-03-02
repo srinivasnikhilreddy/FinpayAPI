@@ -9,10 +9,17 @@ Apartment.configure do |config|
 
   config.use_schemas = true
 
-  config.tenant_names = -> { Company.pluck(:subdomain) }
+  config.tenant_names = lambda {
+    Company.where.not(subdomain: nil).pluck(:subdomain)
+  }
 end
 
 Rails.application.config.middleware.use Apartment::Elevators::Generic, lambda { |request|
   company_id = request.get_header('HTTP_X_COMPANY_ID')
-  Company.exists?(subdomain: company_id) ? company_id : nil
+  return nil unless company_id.present?
+
+  company = Company.find_by(subdomain: company_id)
+  return nil unless company
+
+  company.subdomain
 }

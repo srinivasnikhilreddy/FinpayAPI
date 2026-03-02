@@ -1,12 +1,11 @@
 class Approval < ApplicationRecord
   include SoftDeletable
+  include AASM
   
+  validate :approver_must_be_manager_or_admin
+
   belongs_to :expense
   belongs_to :approver, class_name: "User"
-
-  validates :status,
-            presence: true,
-            inclusion: { in: %w[pending approved rejected] }
 
   validates :expense_id,
             presence: true,
@@ -14,28 +13,35 @@ class Approval < ApplicationRecord
 
   validates :approver_id, presence: true
 
-  # In Rails, a scope is just a reusable query.
-  scope :pending,  -> { where(status: 'pending') } # where(status: "pending")
-  scope :approved, -> { where(status: 'approved') }
-  scope :rejected, -> { where(status: 'rejected') }
+  aasm column: :status do
+    state :pending, initial: true
+    state :approved
+    state :rejected
 
-  after_create :sync_expense_status
-  after_update :sync_expense_status, if: :saved_change_to_status?
+    event :approve do
+      transitions from: :pending,
+                  to: :approved,
+                  guard: :approver_allowed?
+    end
+
+    event :reject do
+      transitions from: :pending,
+                  to: :rejected,
+                  guard: :approver_allowed?
+    end
+  end
 
   private
 
-  def sync_expense_status
-    statuses = expense.approvals.pluck(:status)
+  def approver_must_be_manager_or_admin
+    return if approver.blank? # let presence validation handle it
+    return if approver.admin? || approver.manager?
 
-    new_status =
-      if statuses.include?("rejected")
-        "rejected"
-      elsif statuses.include?("pending")
-        "pending"
-      else
-        "approved"
-      end
+    errors.add(:approver_id, "must be manager or admin")
+  end
 
-    expense.update!(status: new_status) if expense.status != new_status
+  def approver_allowed?(actor)
+    return false unless actor
+    actor.admin? || actor.manager?
   end
 end

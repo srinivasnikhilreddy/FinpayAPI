@@ -10,13 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_02_24_060822) do
+ActiveRecord::Schema[7.0].define(version: 2026_03_02_051830) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "accounts", force: :cascade do |t|
-    t.string "name", null: false
-    t.decimal "balance", precision: 15, scale: 2, default: "0.0"
+    t.string "name"
+    t.decimal "balance"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
@@ -25,14 +25,24 @@ ActiveRecord::Schema[7.0].define(version: 2026_02_24_060822) do
     t.index ["user_id"], name: "index_accounts_on_user_id"
   end
 
+  create_table "activity_logs", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "expense_id", null: false
+    t.string "action"
+    t.jsonb "metadata"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["expense_id"], name: "index_activity_logs_on_expense_id"
+    t.index ["user_id"], name: "index_activity_logs_on_user_id"
+  end
+
   create_table "approvals", force: :cascade do |t|
     t.bigint "expense_id", null: false
-    t.bigint "approver_id", null: false
-    t.string "status", default: "pending", null: false
+    t.bigint "approver_id"
+    t.string "status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
-    t.index ["approver_id"], name: "index_approvals_on_approver_id"
     t.index ["deleted_at"], name: "index_approvals_on_deleted_at"
     t.index ["expense_id", "approver_id"], name: "index_approvals_on_expense_and_approver", unique: true
     t.index ["expense_id"], name: "index_approvals_on_expense_id"
@@ -57,28 +67,27 @@ ActiveRecord::Schema[7.0].define(version: 2026_02_24_060822) do
   end
 
   create_table "categories", force: :cascade do |t|
-    t.string "name", null: false
+    t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "companies", force: :cascade do |t|
-    t.string "name", null: false
-    t.string "subdomain", null: false
+    t.string "name"
+    t.string "subdomain"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["subdomain"], name: "index_companies_on_subdomain", unique: true
   end
 
   create_table "expenses", force: :cascade do |t|
-    t.decimal "amount", precision: 15, scale: 2, null: false
+    t.decimal "amount"
     t.text "description"
-    t.string "status", default: "pending", null: false
     t.bigint "user_id", null: false
     t.bigint "category_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
+    t.string "status", default: "pending", null: false
     t.index ["category_id"], name: "index_expenses_on_category_id"
     t.index ["deleted_at"], name: "index_expenses_on_deleted_at"
     t.index ["status"], name: "index_expenses_on_status"
@@ -120,29 +129,30 @@ ActiveRecord::Schema[7.0].define(version: 2026_02_24_060822) do
     t.datetime "deleted_at"
     t.index ["account_id"], name: "index_transactions_on_account_id"
     t.index ["deleted_at"], name: "index_transactions_on_deleted_at"
-    t.index ["idempotency_key"], name: "index_transactions_on_idempotency_key", unique: true
+    t.index ["idempotency_key", "account_id"], name: "index_transactions_on_idempotency_and_account", unique: true
     t.index ["status"], name: "index_transactions_on_status"
   end
 
   create_table "users", force: :cascade do |t|
-    t.string "name", null: false
-    t.string "email", null: false
-    t.string "role", default: "employee", null: false
+    t.string "name"
+    t.string "email"
+    t.string "role"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
     t.string "jti", default: "", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["jti"], name: "index_users_on_jti", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
   add_foreign_key "accounts", "users"
+  add_foreign_key "activity_logs", "expenses"
+  add_foreign_key "activity_logs", "users"
   add_foreign_key "approvals", "expenses"
-  add_foreign_key "approvals", "users", column: "approver_id"
   add_foreign_key "expenses", "categories"
   add_foreign_key "expenses", "users"
   add_foreign_key "receipts", "expenses"

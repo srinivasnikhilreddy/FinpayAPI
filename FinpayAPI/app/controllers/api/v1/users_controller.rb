@@ -6,8 +6,12 @@ module Api
 
       # GET /api/v1/users
       def index
-        users = paginate(User.order(created_at: :desc))
-        
+        users = User.order(created_at: :desc)
+
+        users = users.where("email ILIKE ?", "%#{params[:email]}%") if params[:email].present?
+
+        users = paginate(users)
+
         render json: {
           data: UserListSerializer.new(users),
           meta: pagination_meta(users)

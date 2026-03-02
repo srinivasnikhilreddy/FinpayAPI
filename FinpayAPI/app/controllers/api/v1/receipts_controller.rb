@@ -5,9 +5,16 @@ module Api
       before_action :require_admin!, only: [:destroy]
 
       def index
-        expense = base_scope
+        receipts = base_scope
+                    .receipts
+                    .order(created_at: :desc)
 
-        render json: ReceiptListSerializer.new(expense.receipts)
+        receipts = paginate(receipts)
+
+        render json: {
+          data: ReceiptListSerializer.new(receipts),
+          meta: pagination_meta(receipts)
+        }
       end
 
       def show
